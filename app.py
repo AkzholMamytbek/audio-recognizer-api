@@ -32,20 +32,24 @@ def ffmpeg(file):
         return rec.FinalResult()
 
 
-@app.route('/audio-recognize', methods=['POST']) 
+@app.route('/audio-recognize', methods=['GET', 'POST']) 
 def index():
-    files = request.files
-    file = files.get('file')
-    print(file)
+    if request.method['GET']:
+        return "Not allowed"
+        
+    elif request.method['POST']:
+        files = request.files
+        file = files.get('file')
+        print(file)
 
-    with open(os.path.abspath('file.wav'), 'wb') as f:
-        f.write(file.stream._file)
+        with open(os.path.abspath('file.wav'), 'wb') as f:
+            f.write(file.stream._file)
 
-    res = ffmpeg('file.wav')
-    response = jsonify({'result': res})
-    response.headers.add('Access-Control-Allow-Origin', '*')
+        res = ffmpeg('file.wav')
+        response = jsonify({'result': res})
+        response.headers.add('Access-Control-Allow-Origin', '*')
 
-    return response
+        return response
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=4000)
